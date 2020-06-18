@@ -52,7 +52,7 @@ def down_music(url_list):
 
 
 if __name__ == "__main__":
-    play_url = 'http://music.163.com/playlist?id=420317034'
+    play_url = 'http://music.163.com/playlist?id=326695984'
     con = get_html(play_url)
     lists = get_content(con)
     down_music(lists)

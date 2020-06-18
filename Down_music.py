@@ -13,20 +13,30 @@ import os
 class Spider(object):
     def __init__(self):
         self.headers = {
-            # 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0',
-            'Cookie': '_iuqxldmzr_=32; _ntes_nnid=8d4ef0883a3bcc9d3a2889b0bf36766a,1533782432391; _ntes_nuid=8d4ef0883a3bcc9d3a2889b0bf36766a; __utmc=94650624; WM_TID=GzmBlbRkRGQXeQiYuDVCfoEatU6VSsKC; playerid=19729878; __utma=94650624.1180067615.1533782433.1533816989.1533822858.9; __utmz=94650624.1533822858.9.7.utmcsr=cn.bing.com|utmccn=(referral)|utmcmd=referral|utmcct=/; WM_NI=S5gViyNVs14K%2BZoVerGK69gLlmtnH5NqzyHcCUY%2BiWm2ZaHATeI1gfsEnK%2BQ1jyP%2FROzbzDV0AyJHR4YQfBetXSRipyrYCFn%2BNdA%2FA8Mv80riS3cuMVJi%2BAFgCpXTiHBNHE%3D; WM_NIKE=9ca17ae2e6ffcda170e2e6ee84b674afedfbd3cd7d98b8e1d0f554f888a4abc76990b184badc4f89e7af8ece2af0fea7c3b92a91eba9b7ec738e8abdd2b741e986a1b7e87a8595fadae648b0b3bc8fcb3f8eafb69acb69818b97ccec5dafee9682cb4b98bb87d2e66eb19ba2acaa5bf3b6b7b1ae5a8da6ae9bc75ef49fb7abcb5af8879f87c16fb8889db3ec7cbbae97a4c566e992aca2ae4bfc93bad9b37aab8dfd84f8479696a7ccc44ea59dc0b9d7638c9e82a9c837e2a3; JSESSIONID-WYYY=sHwCKYJYxz6ODfURChA471BMF%5CSVf3%5CTc8Qcy9h9Whj6CfMxw4YWTMV7CIx5g6rqW8OBv04YGHwwq%2B%5CD1N61qknTP%2Fym%2BHJZ1ylSH1EabbQASc9ywIT8YvOr%2FpMgvmm1cbr2%2Bd6ssMYXuTlpOIrKqp%5C%2FM611EhmfAfU47%5CSQWAs%2BYzgY%3A1533828139236'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0',
+            # 'Cookie': '_iuqxldmzr_=32; _ntes_nnid=8d4ef0883a3bcc9d3a2889b0bf36766a,1533782432391; _ntes_nuid=8d4ef0883a3bcc9d3a2889b0bf36766a; __utmc=94650624; WM_TID=GzmBlbRkRGQXeQiYuDVCfoEatU6VSsKC; playerid=19729878; __utma=94650624.1180067615.1533782433.1533816989.1533822858.9; __utmz=94650624.1533822858.9.7.utmcsr=cn.bing.com|utmccn=(referral)|utmcmd=referral|utmcct=/; WM_NI=S5gViyNVs14K%2BZoVerGK69gLlmtnH5NqzyHcCUY%2BiWm2ZaHATeI1gfsEnK%2BQ1jyP%2FROzbzDV0AyJHR4YQfBetXSRipyrYCFn%2BNdA%2FA8Mv80riS3cuMVJi%2BAFgCpXTiHBNHE%3D; WM_NIKE=9ca17ae2e6ffcda170e2e6ee84b674afedfbd3cd7d98b8e1d0f554f888a4abc76990b184badc4f89e7af8ece2af0fea7c3b92a91eba9b7ec738e8abdd2b741e986a1b7e87a8595fadae648b0b3bc8fcb3f8eafb69acb69818b97ccec5dafee9682cb4b98bb87d2e66eb19ba2acaa5bf3b6b7b1ae5a8da6ae9bc75ef49fb7abcb5af8879f87c16fb8889db3ec7cbbae97a4c566e992aca2ae4bfc93bad9b37aab8dfd84f8479696a7ccc44ea59dc0b9d7638c9e82a9c837e2a3; JSESSIONID-WYYY=sHwCKYJYxz6ODfURChA471BMF%5CSVf3%5CTc8Qcy9h9Whj6CfMxw4YWTMV7CIx5g6rqW8OBv04YGHwwq%2B%5CD1N61qknTP%2Fym%2BHJZ1ylSH1EabbQASc9ywIT8YvOr%2FpMgvmm1cbr2%2Bd6ssMYXuTlpOIrKqp%5C%2FM611EhmfAfU47%5CSQWAs%2BYzgY%3A1533828139236'
 
         }
 
-    def __get_songs(self, name):
+    def get_songs(self, name):
         d = '{"hlpretag":"<span class=\\"s-fc7\\">","hlposttag":"</span>","s":"%s","type":"1","offset":"0","total":"true","limit":"30","csrf_token":""}' % name
         wyy = WangYiYun(d)    # 要搜索的歌曲名在这里
         data = wyy.get_data()
         url = 'https://music.163.com/weapi/cloudsearch/get/web?csrf_token='
         response = requests.post(url, data=data, headers=self.headers).json()
+        # print(response['result']['songs'][0])
         return response['result']
 
-    def __get_mp3(self, id):
+    def get_songs_list(self, name):
+        response = self.get_songs(name)
+        songs_list = []
+        for num, song in enumerate(response['songs']):
+            print(num, '歌曲名字：', song['name'], '作者：', song['ar'][0]['name'])
+            songs_list.append(
+                (num, song['name'], song['ar'][0]['name']))
+        return songs_list
+
+    def get_mp3(self, id):
         d = '{"ids":"[%s]","br":320000,"csrf_token":""}' % id
         wyy = WangYiYun(d)
         data = wyy.get_data()
@@ -38,12 +48,16 @@ class Spider(object):
     def __download_mp3(self, url, filename):
         """下载mp3"""
         abspath = os.path.abspath('.')  # 获取绝对路径
+        mac_path = '/Users/money666/Desktop/msc-crawler/down_music/'
         os.chdir(abspath)
         response = requests.get(url, headers=self.headers).content
-        path = os.path.join(abspath, filename)
-        with open(filename + '.mp3', 'wb') as f:
+        path = os.path.join(mac_path, filename)
+
+        with open(path + '.mp3', 'wb') as f:
             f.write(response)
-            print('下载完毕,可以在%s   路径下查看' % path + '.mp3')
+            print('下载完毕,可以在%s 路径下查看' % path + '.mp3')
+
+        return path
 
     def __print_info(self, songs):
         """打印歌曲需要下载的歌曲信息"""
@@ -54,24 +68,19 @@ class Spider(object):
         return songs_list
 
     def run(self):
-        while True:
-            name = input('请输入你需要下载的歌曲：')
-            songs = self.__get_songs(name)
-            if songs['songCount'] == 0:
-                print('没有搜到此歌曲，请换个关键字')
+        name = input('请输入你需要下载的歌曲：')
+        songs = self.get_songs(name)
+        if songs['songCount'] == 0:
+            print('没有搜到此歌曲，请换个关键字')
+        else:
+            songs = self.__print_info(songs['songs'])
+            num = input('请输入需要下载的歌曲，输入左边对应数字即可')
+            url = self.get_mp3(songs[int(num)][1])
+            if not url:
+                print('歌曲需要收费，下载失败')
             else:
-                songs = self.__print_info(songs['songs'])
-                num = input('请输入需要下载的歌曲，输入左边对应数字即可')
-                url = self.__get_mp3(songs[int(num)][1])
-                if not url:
-                    print('歌曲需要收费，下载失败')
-                else:
-                    filename = songs[int(num)][0]
-                    self.__download_mp3(url, filename)
-                flag = input('如需继续可以按任意键进行搜歌，否则按0结束程序')
-                if flag == '0':
-                    break
-        print('程序结束！')
+                filename = songs[int(num)][0]
+                self.__download_mp3(url, filename)
 
 
 class WangYiYun(object):
@@ -126,10 +135,6 @@ class WangYiYun(object):
             'params': params,
             'encSecKey': enc_sec_key
         }
-
-
-def encode_(s):
-    return ''.join([bin(ord(c)).replace('0b', '') for c in s])
 
 
 def main():
