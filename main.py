@@ -18,7 +18,7 @@ app = FastAPI()
 spider = Spider()
 
 
-@app.post("/name")
+@app.post("/api/name")
 def search_by_name(item: Item):
     data_dict = {}
     if item.name:
