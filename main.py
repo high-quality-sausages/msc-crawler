@@ -20,11 +20,15 @@ spider = Spider()
 
 @app.post("/name")
 def search_by_name(item: Item):
+    data_dict = {}
     if item.name:
         songs_list = spider.get_songs_list(item.name)
-        return json.dumps(songs_list, unsure_ascii=False)
+        # song_json = spider.get_songs_json(item.name)
+        data_dict["data"] = songs_list
+        data_dict["err"] = ""
+        return json.dumps(data_dict)
     else:
-        return None
+        return {"data": "", "err": "Missing required parameter 'name'"}
 
 
 # @app.post("/id")

@@ -1,5 +1,6 @@
-fastapi
-uvicorn
-pydantic
-bs4
-pycryptodome
+fastapi==0.58.0
+uvicorn==0.11.5
+pydantic==1.5.1
+bs4==0.0.1
+beautifulsoup4==4.8.2
+pycryptodome==3.9.7
