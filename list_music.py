@@ -45,14 +45,14 @@ def down_music(url_list):
         try:
             print('正在下载', name)
             urllib.request.urlretrieve(
-                url, '/Users/money666/Desktop/msc-crawler/down_music/%s.mp3' % name)
+                url, '/Users/money666/Desktop/code/爬虫/NetcloudMusic/down_music/%s.mp3' % name)
             print('下载成功')
         except:
             print('下载失败')
 
 
 if __name__ == "__main__":
-    play_url = 'http://music.163.com/playlist?id=326695984'
+    play_url = 'http://music.163.com/playlist?id=420317034'
     con = get_html(play_url)
     lists = get_content(con)
     down_music(lists)

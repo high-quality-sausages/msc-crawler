@@ -11,7 +11,7 @@ class Item(BaseModel):
     # 请求体内容，包含请求歌曲名、请求歌曲序号（下载）、请求歌手（功能暂定）
     id: int = None
     name: str = None
-    artist: str = None
+    singer: str = None
 
 
 app = FastAPI()
