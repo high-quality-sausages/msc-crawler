@@ -26,7 +26,8 @@ def search_by_name(item: Item):
         # song_json = spider.get_songs_json(item.name)
         data_dict["data"] = songs_list
         data_dict["err"] = ""
-        return json.dumps(data_dict)
+        return data_dict
+        # return json.dumps(data_dict, ensure_ascii=False)
     else:
         return {"data": "", "err": "Missing required parameter 'name'"}
 

@@ -28,12 +28,20 @@ class Spider(object):
 
     def get_songs_list(self, name):
         response = self.get_songs(name)
-        song_dict = {}
         song_list = []
         for num, song in enumerate(response['songs']):
+            # print(num)
+            song_dict = {}
+            singer_dict = {}
             song_dict["num"] = str(num)
             song_dict["name"] = song['name']
-            song_dict["singer"] = song['ar'][0]['name']
+
+            singer_dict["id"] = ''
+            singer_dict["name"] = song['ar'][0]['name']
+            singer_dict["age"] = 0
+            singer_dict["nation"] = ''
+
+            song_dict["singer"] = singer_dict
             song_list.append(song_dict)
         return song_list
 
