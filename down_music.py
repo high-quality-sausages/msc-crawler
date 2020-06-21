@@ -19,7 +19,7 @@ class Spider(object):
 
     def get_songs(self, name):
         d = '{"hlpretag":"<span class=\\"s-fc7\\">","hlposttag":"</span>","s":"%s","type":"1","offset":"0","total":"true","limit":"30","csrf_token":""}' % name
-        wyy = WangYiYun(d)    # 要搜索的歌曲名在这里
+        wyy = AesDecode(d)    # 要搜索的歌曲名在这里
         data = wyy.get_data()
         url = 'https://music.163.com/weapi/cloudsearch/get/web?csrf_token='
         response = requests.post(url, data=data, headers=self.headers).json()
@@ -42,6 +42,9 @@ class Spider(object):
         #     print('专辑封面下载完毕,可以在%s 路径下查看' % path)
         # return path
         return pic_url
+
+    def down_music(self, url):
+        path = '/Users/money666/Desktop/msc-crawler/down_picture/'
 
     def get_songs_list(self, name):
         response = self.get_songs(name)['result']
@@ -68,7 +71,7 @@ class Spider(object):
 
     def get_mp3(self, id):
         d = '{"ids":"[%s]","br":320000,"csrf_token":""}' % id
-        wyy = WangYiYun(d)
+        wyy = AesDecode(d)
         data = wyy.get_data()
         url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
         response = requests.post(url, data=data, headers=self.headers).json()
@@ -113,7 +116,7 @@ class Spider(object):
                 self.__download_mp3(url, filename)
 
 
-class WangYiYun(object):
+class AesDecode(object):
     def __init__(self, d):
         self.d = d
         self.e = '010001'
