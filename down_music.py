@@ -19,15 +19,37 @@ class Spider(object):
 
     def get_songs(self, name):
         d = '{"hlpretag":"<span class=\\"s-fc7\\">","hlposttag":"</span>","s":"%s","type":"1","offset":"0","total":"true","limit":"30","csrf_token":""}' % name
-        wyy = WangYiYun(d)    # 要搜索的歌曲名在这里
+        wyy = AesDecode(d)    # 要搜索的歌曲名在这里
         data = wyy.get_data()
         url = 'https://music.163.com/weapi/cloudsearch/get/web?csrf_token='
         response = requests.post(url, data=data, headers=self.headers).json()
-        # print(response['result']['songs'][0])
-        return response['result']
+        # print(response['result']['songs'][0]['name'])
+        # print(response['result']['songs'][0]['al']['picUrl'])
+        # print(response)
+        return response
+
+    def get_song_pic(self, name):
+        response = self.get_songs(name)
+        # path = '/Users/money666/Desktop/msc-crawler/down_picture/'
+        # filename_name = str(response['result']['songs'][0]['name']) + \
+        #     '-' + str(response['result']['songs'][0]['ar'][0]['name'])
+        # filename_id = str(response['songs'][0]['id'])
+        # path = os.path.join(path, str(filename_id))
+        pic_url = response['result']['songs'][0]['al']['picUrl']
+        # response = requests.get(pic_url, headers=self.headers).content
+        # with open(path + '.jpg', 'wb') as f:
+        #     f.write(response)
+        #     print('专辑封面下载完毕,可以在%s 路径下查看' % path)
+        # return path
+        return pic_url
+
+    def down_music(self, url):
+        path = '/Users/money666/Desktop/msc-crawler/down_picture/'
 
     def get_songs_list(self, name):
-        response = self.get_songs(name)
+        response = self.get_songs(name)['result']
+        pic_url = self.get_song_pic(name)
+        mus_url = self.get_mp3(response['songs'][0]['id'])
         song_list = []
         for num, song in enumerate(response['songs']):
             # print(num)
@@ -42,25 +64,14 @@ class Spider(object):
             singer_dict["nation"] = ''
 
             song_dict["singer"] = singer_dict
+            song_dict["picture"] = pic_url
+            song_dict["link"] = mus_url
             song_list.append(song_dict)
         return song_list
 
-    def get_songs_json(self, name):
-        response = self.get_songs(name)
-        data_dict = {}
-        song_dict = {}
-        song_list = []
-        for num, song in enumerate(response['songs']):
-            song_dict["num"] = str(num)
-            song_dict["name"] = song['name']
-            song_dict["singer"] = song['ar'][0]['name']
-            song_list.append(song_dict)
-        data_dict["data"] = song_list
-        return data_dict
-
     def get_mp3(self, id):
         d = '{"ids":"[%s]","br":320000,"csrf_token":""}' % id
-        wyy = WangYiYun(d)
+        wyy = AesDecode(d)
         data = wyy.get_data()
         url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
         response = requests.post(url, data=data, headers=self.headers).json()
@@ -91,7 +102,7 @@ class Spider(object):
 
     def run(self):
         name = input('请输入你需要下载的歌曲：')
-        songs = self.get_songs(name)
+        songs = self.get_songs(name)['result']
         if songs['songCount'] == 0:
             print('没有搜到此歌曲，请换个关键字')
         else:
@@ -105,7 +116,7 @@ class Spider(object):
                 self.__download_mp3(url, filename)
 
 
-class WangYiYun(object):
+class AesDecode(object):
     def __init__(self, d):
         self.d = d
         self.e = '010001'
