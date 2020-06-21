@@ -28,27 +28,9 @@ class Spider(object):
         # print(response)
         return response
 
-    def get_song_pic(self, name):
-        response = self.get_songs(name)
-        # path = '/Users/money666/Desktop/msc-crawler/down_picture/'
-        # filename_name = str(response['result']['songs'][0]['name']) + \
-        #     '-' + str(response['result']['songs'][0]['ar'][0]['name'])
-        # filename_id = str(response['songs'][0]['id'])
-        # path = os.path.join(path, str(filename_id))
-        pic_url = response['result']['songs'][0]['al']['picUrl']
-        # response = requests.get(pic_url, headers=self.headers).content
-        # with open(path + '.jpg', 'wb') as f:
-        #     f.write(response)
-        #     print('专辑封面下载完毕,可以在%s 路径下查看' % path)
-        # return path
-        return pic_url
-
-    def down_music(self, url):
-        path = '/Users/money666/Desktop/msc-crawler/down_picture/'
-
     def get_songs_list(self, name):
         response = self.get_songs(name)['result']
-        pic_url = self.get_song_pic(name)
+        pic_url = response['songs'][0]['al']['picUrl']
         mus_url = self.get_mp3(response['songs'][0]['id'])
         song_list = []
         for num, song in enumerate(response['songs']):
@@ -75,7 +57,7 @@ class Spider(object):
         data = wyy.get_data()
         url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
         response = requests.post(url, data=data, headers=self.headers).json()
-        print(response)
+        # print(response)
         return response['data'][0]['url']
 
     def __download_mp3(self, url, filename):
@@ -88,8 +70,16 @@ class Spider(object):
 
         with open(path + '.mp3', 'wb') as f:
             f.write(response)
-            print('下载完毕,可以在%s 路径下查看' % path + '.mp3')
+            print('歌曲下载完毕,可以在%s 路径下查看' % path + '.mp3')
 
+        return path
+
+    def down_picture(self, url, filename):
+        path = '/Users/money666/Desktop/msc-crawler/down_picture/'
+        response = requests.get(url, headers=self.headers).content
+        with open(path + '.jpg', 'wb') as f:
+            f.write(response)
+            print('专辑封面下载完毕,可以在%s 路径下查看' % path)
         return path
 
     def __print_info(self, songs):
@@ -103,17 +93,20 @@ class Spider(object):
     def run(self):
         name = input('请输入你需要下载的歌曲：')
         songs = self.get_songs(name)['result']
+        pic_url = songs['songs'][0]['al']['picUrl']
         if songs['songCount'] == 0:
             print('没有搜到此歌曲，请换个关键字')
         else:
             songs = self.__print_info(songs['songs'])
             num = input('请输入需要下载的歌曲，输入左边对应数字即可')
             url = self.get_mp3(songs[int(num)][1])
+
             if not url:
                 print('歌曲需要收费，下载失败')
             else:
                 filename = songs[int(num)][0]
                 self.__download_mp3(url, filename)
+                self.down_picture(pic_url, filename)
 
 
 class AesDecode(object):
