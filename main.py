@@ -22,8 +22,8 @@ spider = Spider()
 def search_by_name(item: Item):
     data_dict = {}
     if item.name:
+        # picture = spider.get_song_pic(item.name)
         songs_list = spider.get_songs_list(item.name)
-        # song_json = spider.get_songs_json(item.name)
         data_dict["data"] = songs_list
         data_dict["err"] = ""
         return data_dict
