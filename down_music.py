@@ -70,7 +70,7 @@ class Spider(object):
 
         with open(path + '.mp3', 'wb') as f:
             f.write(response)
-            print('歌曲下载完毕,可以在%s 路径下查看' % path + '.mp3')
+            # print('歌曲下载完毕,可以在%s 路径下查看' % path + '.mp3')
 
         return path
 
@@ -79,7 +79,7 @@ class Spider(object):
         response = requests.get(url, headers=self.headers).content
         with open(path + '.jpg', 'wb') as f:
             f.write(response)
-            print('专辑封面下载完毕,可以在%s 路径下查看' % path)
+            # print('专辑封面下载完毕,可以在%s 路径下查看' % path)
         return path
 
     def __print_info(self, songs):
