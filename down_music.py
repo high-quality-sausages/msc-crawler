@@ -5,6 +5,7 @@ from Crypto.Cipher import AES
 import base64
 import codecs
 import os
+import ufile_up
 """
 获取歌曲地址：https://music.163.com/weapi/song/enhance/player/url?csrf_token=429d8812f4449bb9acb60e7647113999
 """
@@ -63,23 +64,23 @@ class Spider(object):
     def __download_mp3(self, url, filename):
         """下载mp3"""
         abspath = os.path.abspath('.')  # 获取绝对路径
-        mac_path = '/Users/money666/Desktop/msc-crawler/down_music/'
+        mac_path = '/Users/money666/Desktop/code/msc-crawler/down_music'
         os.chdir(abspath)
         response = requests.get(url, headers=self.headers).content
         path = os.path.join(mac_path, filename)
+        path = path + '.mp3'
 
-        with open(path + '.mp3', 'wb') as f:
+        with open(path, 'wb') as f:
             f.write(response)
-            # print('歌曲下载完毕,可以在%s 路径下查看' % path + '.mp3')
-
+            print('歌曲下载完毕,可以在{0}路径下查看'.format(path))
         return path
 
     def down_picture(self, url, filename):
-        path = '/Users/money666/Desktop/msc-crawler/down_picture/'
+        path = '/Users/money666/Desktop/code/msc-crawler/down_picture/'
         response = requests.get(url, headers=self.headers).content
         with open(path + '.jpg', 'wb') as f:
             f.write(response)
-            # print('专辑封面下载完毕,可以在%s 路径下查看' % path)
+            print('专辑封面下载完毕,可以在%s 路径下查看' % path)
         return path
 
     def __print_info(self, songs):
@@ -105,8 +106,9 @@ class Spider(object):
                 print('歌曲需要收费，下载失败')
             else:
                 filename = songs[int(num)][0]
-                self.__download_mp3(url, filename)
-                self.down_picture(pic_url, filename)
+                path = self.__download_mp3(url, filename)
+                ufile_up.put_file(path, filename)
+                # self.down_picture(pic_url, filename) #下载专辑封面
 
 
 class AesDecode(object):

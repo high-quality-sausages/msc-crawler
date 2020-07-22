@@ -24,12 +24,15 @@ def search_by_name(item: Item):
     if item.name:
         # picture = spider.get_song_pic(item.name)
         songs_list = spider.get_songs_list(item.name)
-        data_dict["data"] = songs_list
-        data_dict["err"] = ""
-        return data_dict
-        # return json.dumps(data_dict, ensure_ascii=False)
+        if songs_list:
+            data_dict["data"] = songs_list
+            data_dict["err"] = 0
+            data_dict["msg"]: ""
+            return data_dict
+        else:
+            return {"data": "", "err": 1, "msg": "cant find song"}
     else:
-        return {"data": "", "err": "Missing required parameter 'name'"}
+        return {"data": "", "err": 1, "msg": "Missing required parameter 'name'"}
 
 
 # @app.post("/id")
